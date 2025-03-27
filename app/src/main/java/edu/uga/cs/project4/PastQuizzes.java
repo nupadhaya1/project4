@@ -25,7 +25,6 @@ public class PastQuizzes extends AppCompatActivity {
             return insets;
         });
 
-        // ✅ Set up the custom toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -34,7 +33,6 @@ public class PastQuizzes extends AppCompatActivity {
         }
     }
 
-    // ✅ Handle back button in toolbar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
