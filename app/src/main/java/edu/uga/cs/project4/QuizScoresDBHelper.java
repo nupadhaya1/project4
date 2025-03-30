@@ -93,6 +93,7 @@ public class QuizScoresDBHelper extends SQLiteOpenHelper {
                 int score = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SCORE));
                 scoresList.add("ID: " + id + ", Date: " + date + ", Score: " + score);
             } while (cursor.moveToNext());
+
         }
 
         cursor.close();
