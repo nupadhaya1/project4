@@ -6,49 +6,78 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class facilitates storing and restoring quiz scores.
+ * This class manages operations for storing and retrieving quiz scores
+ * using an SQLite database.
  */
 public class QuizScoresData {
 
+    // Tag used for logging
     public static final String DEBUG_TAG = "QuizScoresData";
 
+    // The database INSTANCE used for read/write operations
     private SQLiteDatabase db;
+
+    // Reference to the SQLiteOpenHelper that manages database creation and changes
     private SQLiteOpenHelper quizScoresDbHelper;
 
+    // Context used for Toast messages
+    private Context context;
+
+    // Array of column names to retrieve from the database when querying
     private static final String[] allColumns = {
             QuizScoresDBHelper.COLUMN_ID,
             QuizScoresDBHelper.COLUMN_DATE,
             QuizScoresDBHelper.COLUMN_SCORE
     };
 
+    /**
+     * Constructor: initializes the helper using the application context.
+     * Uses singleton pattern to ensure only one database helper is used.
+     */
     public QuizScoresData(Context context) {
+        this.context = context;
         quizScoresDbHelper = QuizScoresDBHelper.getInstance(context);
     }
 
-    // Open the database
+    /**
+     * Opens the database for writing. Must be called before any read/write operations.
+     */
     public void open() {
         db = quizScoresDbHelper.getWritableDatabase();
         Log.d(DEBUG_TAG, "QuizScoresData: db open");
+        Toast.makeText(context, "Open database is working", Toast.LENGTH_SHORT).show();
     }
 
-    // Close the database
+    /**
+     * Closes the database when finished to avoid memory leaks.
+     */
     public void close() {
         if (quizScoresDbHelper != null) {
             quizScoresDbHelper.close();
             Log.d(DEBUG_TAG, "QuizScoresData: db closed");
+            Toast.makeText(context, "Close is working", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Checks whether the database is currently open.
+     */
     public boolean isDBOpen() {
         return db.isOpen();
     }
 
-    // Store a new quiz score
+    /**
+     * Inserts a new quiz score into the database.
+     *
+     * @param quizScore The QuizScore object containing the date and score.
+     * @return The same object, now with an assigned ID from the database.
+     */
     public QuizScore storeQuizScore(QuizScore quizScore) {
         ContentValues values = new ContentValues();
         values.put(QuizScoresDBHelper.COLUMN_DATE, quizScore.getDate());
@@ -61,15 +90,25 @@ public class QuizScoresData {
         return quizScore;
     }
 
-    // Retrieve all quiz scores
+    /**
+     * Retrieves all quiz scores from the database, ordered by most recent date.
+     *
+     * @return A list of QuizScore objects from the database.
+     */
     public List<QuizScore> retrieveAllQuizScores() {
         ArrayList<QuizScore> quizScores = new ArrayList<>();
         Cursor cursor = null;
 
         try {
-            cursor = db.query(QuizScoresDBHelper.TABLE_QUIZ_SCORES, allColumns,
-                    null, null, null, null,
-                    QuizScoresDBHelper.COLUMN_DATE + " DESC");
+            cursor = db.query(
+                    QuizScoresDBHelper.TABLE_QUIZ_SCORES,
+                    allColumns,
+                    null,
+                    null,
+                    null,
+                    null,
+                    QuizScoresDBHelper.COLUMN_DATE + " DESC"
+            );
 
             if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
@@ -80,6 +119,7 @@ public class QuizScoresData {
                     QuizScore quizScore = new QuizScore(date, score);
                     quizScore.setId(id);
                     quizScores.add(quizScore);
+
                     Log.d(DEBUG_TAG, "Retrieved QuizScore: " + quizScore);
                 }
             }
@@ -88,6 +128,7 @@ public class QuizScoresData {
                 Log.d(DEBUG_TAG, "Number of records from DB: " + cursor.getCount());
             else
                 Log.d(DEBUG_TAG, "Number of records from DB: 0");
+
         } catch (Exception e) {
             Log.d(DEBUG_TAG, "Exception caught: " + e);
         } finally {
@@ -99,3 +140,5 @@ public class QuizScoresData {
         return quizScores;
     }
 }
+
+

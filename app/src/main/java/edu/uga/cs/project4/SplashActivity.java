@@ -47,11 +47,9 @@ public class SplashActivity extends AppCompatActivity {
                 Intent intent = new Intent(SplashActivity.this, PastQuizzes.class);
 
                 startActivity(intent);
-                finish(); // Close SplashActivity so the user can't go back to it
-            }
-        });
-
-
+                finish();
+            } // onClick
+        }); // listener
 
 
     } // onCreate
