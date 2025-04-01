@@ -41,15 +41,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/attemptTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Attempt:"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/dateTitle"
@@ -65,7 +56,7 @@
                 android:id="@+id/scoreTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".7"
                 android:gravity="center"
                 android:text="Score:"
                 android:textColor="@color/white"
@@ -75,8 +66,10 @@
 
         <ListView
             android:id="@+id/quizListView"
-            android:layout_width="wrap_content"
-            android:layout_height="507dp" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

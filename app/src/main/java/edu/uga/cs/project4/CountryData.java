@@ -112,7 +112,7 @@ public class CountryData {
 
                     Country countryDB = new Country(country, continent);
                     countryDB.setId(id);
-                    countries.add(country);
+                    countries.add(countryDB);
 
                     Log.d(DEBUG_TAG, "Retrieved country: " + country);
                 }

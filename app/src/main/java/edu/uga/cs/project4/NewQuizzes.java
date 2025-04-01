@@ -30,8 +30,8 @@ public class NewQuizzes extends AppCompatActivity {
         quizScoresData = new QuizScoresData(this);
         quizScoresData.open();
 
-        // close
-        quizScoresData.close();
+//        // close
+//        quizScoresData.close();
 
 
         Toast.makeText(this, "End of Code", Toast.LENGTH_SHORT).show();
