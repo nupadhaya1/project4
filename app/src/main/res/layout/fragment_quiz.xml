@@ -1,53 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quizLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".QuizFragment">
+    android:orientation="vertical"
+    android:background="#BA0C2F"
+    android:padding="24dp">
 
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/questionText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="Question"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="TextView"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+    <RadioGroup
+        android:id="@+id/answersGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:textSize="34sp">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="TextView"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/nextButton"
+        <RadioButton
+            android:id="@+id/answerA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Next"
-            android:layout_marginTop="24dp"/>
+            android:buttonTint="@color/radio_button_tint"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
-        <Button
-            android:id="@+id/endButton"
+        <RadioButton
+            android:id="@+id/answerB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End Quiz"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center_horizontal" />
+            android:buttonTint="@color/radio_button_tint"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
+        <RadioButton
+            android:id="@+id/answerC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/radio_button_tint"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+    </RadioGroup>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Next"
+        android:textColor="@color/black"
+        android:backgroundTint="#FFFFFF"/>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/endButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="End Quiz"
+        android:textColor="@color/black"
+        android:backgroundTint="#FFFFFF"/>
+</LinearLayout>

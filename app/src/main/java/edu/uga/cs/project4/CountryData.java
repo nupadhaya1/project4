@@ -43,7 +43,7 @@ public class CountryData {
     public CountryData(Context context) {
         this.context = context;
         countryDbHelper = CountryDBHelper.getInstance(context);
-    }
+    } // CountryData
 
     /**
      * Opens the database for writing. Must be called before any read/write operations.
@@ -51,8 +51,8 @@ public class CountryData {
     public void open() {
         db = countryDbHelper.getWritableDatabase();
         Log.d(DEBUG_TAG, "CountryData: db open");
-        Toast.makeText(context, "Open Country database is working", Toast.LENGTH_SHORT).show();
-    }
+        //Toast.makeText(context, "Open Country database is working", Toast.LENGTH_SHORT).show();
+    } // open
 
     /**
      * Closes the database when finished to avoid memory leaks.
@@ -61,9 +61,9 @@ public class CountryData {
         if (countryDbHelper != null) {
             countryDbHelper.close();
             Log.d(DEBUG_TAG, "CountryData: db closed");
-            Toast.makeText(context, "Close CountryDB is working", Toast.LENGTH_SHORT).show();
-        }
-    }
+            //Toast.makeText(context, "Close CountryDB is working", Toast.LENGTH_SHORT).show();
+        } // if statement
+    } // close
 
     /**
      * Checks whether the database is currently open.
@@ -82,7 +82,7 @@ public class CountryData {
 
         Log.d(DEBUG_TAG, "Stored new country with id: " + id);
         return country;
-    }
+    } //storeCountry
 
     /**
      * Retrieves all countries from the database
@@ -90,33 +90,49 @@ public class CountryData {
      * @return A list of Country objects from the database.
      */
     public List<Country> retrieveAllCountry() {
+        // Create empty list to hold country objects
         ArrayList<Country> countries = new ArrayList<>();
         Cursor cursor = null;
 
         try {
+            // Query the database to retrieve all columns from the Country table,
             cursor = db.query(
-                    CountryDBHelper.TABLE_COUNTRY,
-                    allColumns,
+                    CountryDBHelper.TABLE_COUNTRY, // name of table to query
+                    allColumns,                    // The columns to return in the result (id, country, continent
+                    null,                          // null selects all rows
                     null,
                     null,
                     null,
-                    null,
-                    CountryDBHelper.COLUMN_COUNTRY + " DESC"
-            );
+                    CountryDBHelper.COLUMN_COUNTRY + " DESC" // order by descending order
+            ); // query
 
+            // Check if the cursor is not null and contains at least one row
             if (cursor != null && cursor.getCount() > 0) {
+
+                // Loop through each row in the result set
                 while (cursor.moveToNext()) {
+
+                    // Retrieve the ID from the current row
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(CountryDBHelper.COLUMN_ID));
+
+                    // Retrieve the country name from the current row
                     String country = cursor.getString(cursor.getColumnIndexOrThrow(CountryDBHelper.COLUMN_COUNTRY));
+
+                    // Retrieve the continent name from the current row
                     String continent = cursor.getString(cursor.getColumnIndexOrThrow(CountryDBHelper.COLUMN_CONTINENT));
 
+                    // Create a new Country object using the country and continent
                     Country countryDB = new Country(country, continent);
+
+                    // set id
                     countryDB.setId(id);
+
+                    // Add the Country object to the list of countries
                     countries.add(countryDB);
 
                     Log.d(DEBUG_TAG, "Retrieved country: " + country);
                 }
-            }
+            } // if statement
 
             if (cursor != null)
                 Log.d(DEBUG_TAG, "Number of records from DB: " + cursor.getCount());
@@ -132,7 +148,7 @@ public class CountryData {
         }
 
         return countries;
-    }
-}
+    } // retreiveAllCountry
+} // CountryData
 
 

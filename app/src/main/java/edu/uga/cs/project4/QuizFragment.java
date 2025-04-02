@@ -9,39 +9,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class QuizFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    // UI variables
+    private TextView questionText;
+    private RadioGroup answersGroup;
+    private RadioButton answerA, answerB, answerC;
+    private Button nextButton, endButton;
 
-    private String mParam1;
-    private String mParam2;
+    // data storage for question
+    private List<Question> quizQuestions;
+    private int currentQuestion = 0;
+    private int score = 0;
 
+    // constructor
     public QuizFragment() {
-        // Required empty public constructor
-    }
-
-    public static QuizFragment newInstance(String param1, String param2) {
-        QuizFragment fragment = new QuizFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -49,52 +44,106 @@ public class QuizFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
 
-        TextView countryText = view.findViewById(R.id.textView3);
-        TextView continentText = view.findViewById(R.id.textView4);
-        Button nextButton = view.findViewById(R.id.nextButton);
-        Button endButton = view.findViewById(R.id.endButton); // New button
+        // Initialize UI components
+        questionText = view.findViewById(R.id.questionText);
+        answersGroup = view.findViewById(R.id.answersGroup);
+        answerA = view.findViewById(R.id.answerA);
+        answerB = view.findViewById(R.id.answerB);
+        answerC = view.findViewById(R.id.answerC);
+        nextButton = view.findViewById(R.id.nextButton);
+        endButton = view.findViewById(R.id.endButton);
 
+        // Load countries from the database
         CountryData countryData = new CountryData(requireContext());
         countryData.open();
-
         List<Country> allCountries = countryData.retrieveAllCountry();
+        countryData.close();
 
-        Runnable showRandomCountry = () -> {
-            if (!allCountries.isEmpty()) {
-                Random random = new Random();
-                Country randomCountry = allCountries.get(random.nextInt(allCountries.size()));
-                countryText.setText("Country: " + randomCountry.getCountry());
-                continentText.setText("Continent: " + randomCountry.getContinent());
-            } else {
-                countryText.setText("No data");
-                continentText.setText("");
+
+        // Select 6 unique random countries
+        Set<Integer> selectedIndexes = new HashSet<>();
+        Random random = new Random();
+        List<Country> selectedCountries = new ArrayList<>();
+
+        while (selectedCountries.size() < 6) {
+            int index = random.nextInt(allCountries.size());
+            if (!selectedIndexes.contains(index)) {
+                selectedCountries.add(allCountries.get(index));
+                selectedIndexes.add(index);
+            } // if statement
+        } // while loop
+
+        // Get list of all unique continents
+        Set<String> continentSet = new HashSet<>();
+        for (Country c : allCountries) {
+            continentSet.add(c.getContinent());
+        } // for
+
+        List<String> allContinents = new ArrayList<>(continentSet);
+
+        // Build list of questions
+        quizQuestions = new ArrayList<>();
+        for (Country country : selectedCountries) {
+            List<String> incorrect = new ArrayList<>(allContinents);
+            incorrect.remove(country.getContinent());
+            Collections.shuffle(incorrect);
+            List<String> wrongAnswers = incorrect.subList(0, 2);
+            quizQuestions.add(new Question(country.getCountry(), country.getContinent(), wrongAnswers));
+        } // for loop
+
+        // Display first question
+        showQuestion();
+
+        // Next button logic
+        nextButton.setOnClickListener(v -> {
+            int selectedId = answersGroup.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(getContext(), "Please select an answer", Toast.LENGTH_SHORT).show();
+                return;
             }
-        };
 
-        showRandomCountry.run();
+            RadioButton selected = view.findViewById(selectedId);
+            String selectedText = selected.getText().toString();
+            String selectedContinent = selectedText.substring(3);
 
-        nextButton.setOnClickListener(v -> showRandomCountry.run());
+            if (quizQuestions.get(currentQuestion).isCorrect(selectedContinent)) {
+                score++;
+            }
 
+            currentQuestion++;
+            if (currentQuestion < quizQuestions.size()) {
+                answersGroup.clearCheck();
+                showQuestion();
+            } else {
+                Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // End button logic
         endButton.setOnClickListener(v -> {
-            // Get current date
-            String currentDate = java.text.DateFormat.getDateTimeInstance().format(new java.util.Date());
+            String currentDate = DateFormat.getDateTimeInstance().format(new java.util.Date());
+            QuizScore quizScore = new QuizScore(currentDate, score);
 
-            // Create a test quiz score with score -1
-            QuizScore quizScore = new QuizScore(currentDate, -1);
-
-            // Insert into the database
             QuizScoresData scoresData = new QuizScoresData(requireContext());
             scoresData.open();
             scoresData.storeQuizScore(quizScore);
             scoresData.close();
 
-            // Go back to SplashActivity
             Intent intent = new Intent(requireContext(), SplashActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
 
-
         return view;
     }
-}
+
+    // show question and answer options
+    private void showQuestion() {
+        Question question = quizQuestions.get(currentQuestion);
+        questionText.setText("Which continent is " + question.getCountryName() + " located in?");
+        List<String> options = question.getAnswerOptions();
+        answerA.setText("A. " + options.get(0));
+        answerB.setText("B. " + options.get(1));
+        answerC.setText("C. " + options.get(2));
+    } // showQuestion
+} // quiz fragment

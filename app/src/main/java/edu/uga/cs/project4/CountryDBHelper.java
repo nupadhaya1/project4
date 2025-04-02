@@ -20,13 +20,16 @@ public class CountryDBHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "country.db";
     private static final int DB_VERSION = 1;
 
+    // Table and column names
     public static final String TABLE_COUNTRY = "country";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_COUNTRY = "country";
     public static final String COLUMN_CONTINENT = "continent";
 
+    // Singleton instance to prevent multiple database helpers
     private static CountryDBHelper helperInstance;
 
+    // SQL statement to create the country table
     private static final String CREATE_COUNTRY =
             "create table " + TABLE_COUNTRY + " ("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

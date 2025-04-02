@@ -96,6 +96,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
+
                 android:backgroundTint="#FFFFFF"
                 android:text="Past Quizzes"
                 android:textColor="@color/black" />
