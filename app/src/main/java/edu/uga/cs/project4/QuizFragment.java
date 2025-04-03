@@ -129,7 +129,7 @@ public class QuizFragment extends Fragment {
         QuizScore quizScore = new QuizScore(currentDate, score);
         new SaveQuizScoreTask(requireContext()).execute(quizScore);
 
-        Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
+        // Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(requireContext(), ScoreView.class);
         intent.putExtra("score", score);
         startActivity(intent);

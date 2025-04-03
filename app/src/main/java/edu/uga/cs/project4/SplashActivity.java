@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity {
             scoresData.open();
             scoresData.deleteAllQuizScores();
             scoresData.close();
-            Toast.makeText(SplashActivity.this, "All quiz scores deleted.", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(SplashActivity.this, "All quiz scores deleted.", Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -120,11 +120,7 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            if (success) {
-                Toast.makeText(SplashActivity.this, "Data loaded successfully!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(SplashActivity.this, "Failed to load data!", Toast.LENGTH_SHORT).show();
-            }
+            
 
             // Enable buttons after loading
             quizButton.setEnabled(true);

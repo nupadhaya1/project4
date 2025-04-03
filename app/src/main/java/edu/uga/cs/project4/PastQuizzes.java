@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,7 +82,6 @@ public class PastQuizzes extends AppCompatActivity {
             }
 
             adapter.notifyDataSetChanged();
-//            Toast.makeText(PastQuizzes.this, "Loaded " + scoreList.size() + " scores", Toast.LENGTH_SHORT).show();
         }
     }
 
