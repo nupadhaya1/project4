@@ -11,9 +11,16 @@ public class NewQuizzes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_quizzes);
 
-        // Load the QuizFragment
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, new QuizFragment());
-        transaction.commit();
+//        // Load the QuizFragment
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.fragment_container, new QuizFragment());
+//        transaction.commit();
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new QuizFragment());
+            transaction.commit();
+        }
+
     }
 }

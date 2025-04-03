@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -36,42 +37,51 @@ public class QuizFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
         viewPager = view.findViewById(R.id.viewPager);
 
-        // Load countries from DB
-        CountryData countryData = new CountryData(requireContext());
-        countryData.open();
-        List<Country> allCountries = countryData.retrieveAllCountry();
-        countryData.close();
+        if (savedInstanceState != null) {
+            // Restore saved state
+            quizQuestions = (List<Question>) savedInstanceState.getSerializable("quizQuestions");
+            List<String> savedAnswers = savedInstanceState.getStringArrayList("userAnswers");
+            userAnswers.clear();
+            userAnswers.addAll(savedAnswers);
+            score = savedInstanceState.getInt("score");
+        } else {
+            // First time setup
+            CountryData countryData = new CountryData(requireContext());
+            countryData.open();
+            List<Country> allCountries = countryData.retrieveAllCountry();
+            countryData.close();
 
-        // Pick 6 unique countries
-        Set<Integer> selectedIndexes = new HashSet<>();
-        Random random = new Random();
-        List<Country> selectedCountries = new ArrayList<>();
-        while (selectedCountries.size() < 6) {
-            int index = random.nextInt(allCountries.size());
-            if (!selectedIndexes.contains(index)) {
-                selectedCountries.add(allCountries.get(index));
-                selectedIndexes.add(index);
+            // Pick 6 unique countries
+            Set<Integer> selectedIndexes = new HashSet<>();
+            Random random = new Random();
+            List<Country> selectedCountries = new ArrayList<>();
+            while (selectedCountries.size() < 6) {
+                int index = random.nextInt(allCountries.size());
+                if (!selectedIndexes.contains(index)) {
+                    selectedCountries.add(allCountries.get(index));
+                    selectedIndexes.add(index);
+                }
+            }
+
+            // Get unique continents
+            Set<String> continentSet = new HashSet<>();
+            for (Country c : allCountries) {
+                continentSet.add(c.getContinent());
+            }
+            List<String> allContinents = new ArrayList<>(continentSet);
+
+            // Create quiz questions
+            quizQuestions = new ArrayList<>();
+            for (Country country : selectedCountries) {
+                List<String> incorrect = new ArrayList<>(allContinents);
+                incorrect.remove(country.getContinent());
+                Collections.shuffle(incorrect);
+                List<String> wrongAnswers = incorrect.subList(0, 2);
+                quizQuestions.add(new Question(country.getCountry(), country.getContinent(), wrongAnswers));
             }
         }
 
-        // Get list of continents
-        Set<String> continentSet = new HashSet<>();
-        for (Country c : allCountries) {
-            continentSet.add(c.getContinent());
-        }
-        List<String> allContinents = new ArrayList<>(continentSet);
-
-        // Create question list
-        quizQuestions = new ArrayList<>();
-        for (Country country : selectedCountries) {
-            List<String> incorrect = new ArrayList<>(allContinents);
-            incorrect.remove(country.getContinent());
-            Collections.shuffle(incorrect);
-            List<String> wrongAnswers = incorrect.subList(0, 2);
-            quizQuestions.add(new Question(country.getCountry(), country.getContinent(), wrongAnswers));
-        }
-
-        // Adapter with answer tracking and final answer handler
+        // Adapter
         QuizPagerAdapter adapter = new QuizPagerAdapter(
                 requireActivity(),
                 quizQuestions,
@@ -88,9 +98,23 @@ public class QuizFragment extends Fragment {
                 }
         );
         viewPager.setAdapter(adapter);
+        if (savedInstanceState != null) {
+            int currentPage = savedInstanceState.getInt("currentPage", 0);
+            viewPager.setCurrentItem(currentPage, false);
+        }
 
         return view;
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("quizQuestions", new ArrayList<>(quizQuestions));
+        outState.putStringArrayList("userAnswers", new ArrayList<>(userAnswers));
+        outState.putInt("score", score);
+        outState.putInt("currentPage", viewPager.getCurrentItem());
+    }
+
 
     // Show the current question and options
     private void collectAnswersAndFinish() {

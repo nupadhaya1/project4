@@ -1,9 +1,11 @@
 package edu.uga.cs.project4;
 
+import java.io.Serializable;
+
 /**
  * The Country class represents a country with a unique ID, its name, and the continent it belongs to.
  */
-public class Country {
+public class Country implements Serializable {
     // Unique identifier for the country
     private long id;
 
