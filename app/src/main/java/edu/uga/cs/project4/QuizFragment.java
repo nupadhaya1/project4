@@ -14,6 +14,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,7 @@ public class QuizFragment extends Fragment {
 
     // UI variables
     private TextView questionText;
+    private TextView questionCountText;
     private RadioGroup answersGroup;
     private RadioButton answerA, answerB, answerC;
     private Button nextButton, endButton;
@@ -46,12 +49,12 @@ public class QuizFragment extends Fragment {
 
         // Initialize UI components
         questionText = view.findViewById(R.id.questionText);
+        questionCountText = view.findViewById(R.id.questionCountText);
         answersGroup = view.findViewById(R.id.answersGroup);
         answerA = view.findViewById(R.id.answerA);
         answerB = view.findViewById(R.id.answerB);
         answerC = view.findViewById(R.id.answerC);
         nextButton = view.findViewById(R.id.nextButton);
-        endButton = view.findViewById(R.id.endButton);
 
         // Load countries from the database
         CountryData countryData = new CountryData(requireContext());
@@ -115,24 +118,25 @@ public class QuizFragment extends Fragment {
                 answersGroup.clearCheck();
                 showQuestion();
             } else {
+                // Save score
+                String currentDate = DateFormat.getDateTimeInstance().format(new java.util.Date());
+                QuizScore quizScore = new QuizScore(currentDate, score);
+
+                QuizScoresData scoresData = new QuizScoresData(requireContext());
+                scoresData.open();
+                scoresData.storeQuizScore(quizScore);
+                scoresData.close();
+
+                // Show Toast
                 Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
+
+                // Navigate back to SplashActivity
+                Intent intent = new Intent(requireContext(), SplashActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
 
-        // End button logic
-        endButton.setOnClickListener(v -> {
-            String currentDate = DateFormat.getDateTimeInstance().format(new java.util.Date());
-            QuizScore quizScore = new QuizScore(currentDate, score);
-
-            QuizScoresData scoresData = new QuizScoresData(requireContext());
-            scoresData.open();
-            scoresData.storeQuizScore(quizScore);
-            scoresData.close();
-
-            Intent intent = new Intent(requireContext(), SplashActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
 
         return view;
     }
@@ -142,8 +146,11 @@ public class QuizFragment extends Fragment {
         Question question = quizQuestions.get(currentQuestion);
         questionText.setText("Which continent is " + question.getCountryName() + " located in?");
         List<String> options = question.getAnswerOptions();
-        answerA.setText("A. " + options.get(0));
-        answerB.setText("B. " + options.get(1));
-        answerC.setText("C. " + options.get(2));
+        answerA.setText(" A. " + options.get(0));
+        answerB.setText(" B. " + options.get(1));
+        answerC.setText(" C. " + options.get(2));
+
+        // Update the question count display
+        questionCountText.setText("Quiz Progress: " + (currentQuestion + 1) + "/6");
     } // showQuestion
 } // quiz fragment

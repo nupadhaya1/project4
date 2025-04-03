@@ -108,4 +108,11 @@ public class QuizScoresDBHelper extends SQLiteOpenHelper {
         db.close();
         return rowsDeleted > 0;
     }
+    public void deleteAllQuizScores() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_QUIZ_SCORES, null, null);
+        db.close();
+        Log.d(DEBUG_TAG, "All quiz scores deleted");
+    }
+
 }

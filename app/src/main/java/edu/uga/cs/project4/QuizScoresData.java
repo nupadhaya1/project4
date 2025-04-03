@@ -139,6 +139,11 @@ public class QuizScoresData {
 
         return quizScores;
     }
+    public void deleteAllQuizScores() {
+        ((QuizScoresDBHelper) quizScoresDbHelper).deleteAllQuizScores();
+        Log.d(DEBUG_TAG, "deleteAllQuizScores: all scores deleted via QuizScoresData");
+    }
+
 }
 
 

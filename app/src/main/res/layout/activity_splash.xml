@@ -103,5 +103,14 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/deleteScoresButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete All Scores"
+            android:layout_marginTop="16dp"
+            />
+
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

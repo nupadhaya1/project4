@@ -22,6 +22,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private Button quizButton;
     private Button pastButton;
+    private Button deleteScoresButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +39,12 @@ public class SplashActivity extends AppCompatActivity {
 
         quizButton = findViewById(R.id.quizButton);
         pastButton = findViewById(R.id.pastButton);
+        deleteScoresButton = findViewById(R.id.deleteScoresButton);
 
         // Disable buttons until data is loaded
         quizButton.setEnabled(false);
         pastButton.setEnabled(false);
+        deleteScoresButton.setEnabled(false);
 
         // Start the AsyncTask to load data
         new LoadDataTask().execute();
@@ -57,6 +61,15 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        deleteScoresButton.setOnClickListener(v -> {
+            QuizScoresData scoresData = new QuizScoresData(SplashActivity.this);
+            scoresData.open();
+            scoresData.deleteAllQuizScores();
+            scoresData.close();
+            Toast.makeText(SplashActivity.this, "All quiz scores deleted.", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
     private class LoadDataTask extends AsyncTask<Void, Void, Boolean> {
@@ -116,6 +129,7 @@ public class SplashActivity extends AppCompatActivity {
             // Enable buttons after loading
             quizButton.setEnabled(true);
             pastButton.setEnabled(true);
+            deleteScoresButton.setEnabled(true);
         }
     }
 }
