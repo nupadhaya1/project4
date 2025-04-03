@@ -125,10 +125,11 @@ public class QuizFragment extends Fragment {
 
                 Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
 
-                // Navigate back to SplashActivity
-                Intent intent = new Intent(requireContext(), SplashActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                // Navigate back to score view
+                Intent intent = new Intent(requireContext(), ScoreView.class);
+                intent.putExtra("score", score);
                 startActivity(intent);
+
             }
         });
 

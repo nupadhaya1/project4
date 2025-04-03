@@ -18,6 +18,7 @@
         <activity
             android:name=".PastQuizzes"
             android:exported="false" />
+        <activity android:name=".ScoreView" android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"> <!-- Set to true so it can be launched -->
