@@ -1,10 +1,13 @@
 package edu.uga.cs.project4;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +16,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class QuizFragment extends Fragment {
     private TextView questionCountText;
     private RadioGroup answersGroup;
     private RadioButton answerA, answerB, answerC;
-    private Button nextButton, endButton;
+    private Button nextButton;
 
     // data storage for question
     private List<Question> quizQuestions;
@@ -39,8 +40,7 @@ public class QuizFragment extends Fragment {
     private int score = 0;
 
     // constructor
-    public QuizFragment() {
-    }
+    public QuizFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +62,6 @@ public class QuizFragment extends Fragment {
         List<Country> allCountries = countryData.retrieveAllCountry();
         countryData.close();
 
-
         // Select 6 unique random countries
         Set<Integer> selectedIndexes = new HashSet<>();
         Random random = new Random();
@@ -73,14 +72,14 @@ public class QuizFragment extends Fragment {
             if (!selectedIndexes.contains(index)) {
                 selectedCountries.add(allCountries.get(index));
                 selectedIndexes.add(index);
-            } // if statement
-        } // while loop
+            }
+        }
 
         // Get list of all unique continents
         Set<String> continentSet = new HashSet<>();
         for (Country c : allCountries) {
             continentSet.add(c.getContinent());
-        } // for
+        }
 
         List<String> allContinents = new ArrayList<>(continentSet);
 
@@ -92,7 +91,7 @@ public class QuizFragment extends Fragment {
             Collections.shuffle(incorrect);
             List<String> wrongAnswers = incorrect.subList(0, 2);
             quizQuestions.add(new Question(country.getCountry(), country.getContinent(), wrongAnswers));
-        } // for loop
+        }
 
         // Display first question
         showQuestion();
@@ -118,16 +117,12 @@ public class QuizFragment extends Fragment {
                 answersGroup.clearCheck();
                 showQuestion();
             } else {
-                // Save score
+                // Save score using AsyncTask
                 String currentDate = DateFormat.getDateTimeInstance().format(new java.util.Date());
                 QuizScore quizScore = new QuizScore(currentDate, score);
+                new SaveQuizScoreTask(requireContext()).execute(quizScore);
 
-                QuizScoresData scoresData = new QuizScoresData(requireContext());
-                scoresData.open();
-                scoresData.storeQuizScore(quizScore);
-                scoresData.close();
 
-                // Show Toast
                 Toast.makeText(getContext(), "Quiz complete! Score: " + score + "/6", Toast.LENGTH_LONG).show();
 
                 // Navigate back to SplashActivity
@@ -137,20 +132,47 @@ public class QuizFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
-    // show question and answer options
+    // Show the current question and options
     private void showQuestion() {
         Question question = quizQuestions.get(currentQuestion);
         questionText.setText("Which continent is " + question.getCountryName() + " located in?");
         List<String> options = question.getAnswerOptions();
-        answerA.setText(" A. " + options.get(0));
-        answerB.setText(" B. " + options.get(1));
-        answerC.setText(" C. " + options.get(2));
-
-        // Update the question count display
+        answerA.setText("A. " + options.get(0));
+        answerB.setText("B. " + options.get(1));
+        answerC.setText("C. " + options.get(2));
         questionCountText.setText("Quiz Progress: " + (currentQuestion + 1) + "/6");
-    } // showQuestion
-} // quiz fragment
+    }
+
+    // AsyncTask for saving the quiz score
+    private class SaveQuizScoreTask extends AsyncTask<QuizScore, Void, Boolean> {
+        private final QuizScoresData scoresData;
+
+        public SaveQuizScoreTask(Context context) {
+            this.scoresData = new QuizScoresData(context.getApplicationContext());
+        }
+
+        @Override
+        protected Boolean doInBackground(QuizScore... scores) {
+            try {
+                scoresData.open();
+                scoresData.storeQuizScore(scores[0]);
+                scoresData.close();
+                return true;
+            } catch (Exception e) {
+                Log.e("QuizFragment", "Error saving quiz score", e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!success) {
+                Toast.makeText(requireContext(), "Failed to save score", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+}

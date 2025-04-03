@@ -51,7 +51,6 @@ public class QuizScoresData {
     public void open() {
         db = quizScoresDbHelper.getWritableDatabase();
         Log.d(DEBUG_TAG, "QuizScoresData: db open");
-        Toast.makeText(context, "Open database is working", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -61,7 +60,6 @@ public class QuizScoresData {
         if (quizScoresDbHelper != null) {
             quizScoresDbHelper.close();
             Log.d(DEBUG_TAG, "QuizScoresData: db closed");
-            Toast.makeText(context, "Close is working", Toast.LENGTH_SHORT).show();
         }
     }
 

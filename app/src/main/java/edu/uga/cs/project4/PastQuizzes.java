@@ -1,6 +1,7 @@
 package edu.uga.cs.project4;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PastQuizzes extends AppCompatActivity {
+
+    private ListView quizListView;
+    private ArrayAdapter<String> adapter;
+    private List<String> formattedScores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,36 +43,48 @@ public class PastQuizzes extends AppCompatActivity {
             getSupportActionBar().setTitle("Past Quizzes");
         }
 
-        // Load quiz scores and display them
-        ListView quizListView = findViewById(R.id.quizListView);
+        quizListView = findViewById(R.id.quizListView);
+        formattedScores = new ArrayList<>();
 
-        QuizScoresData scoresData = new QuizScoresData(this);
-        scoresData.open();
-        List<QuizScore> scoreList = scoresData.retrieveAllQuizScores();
-        scoresData.close();
-
-        List<String> formattedScores = new ArrayList<>();
-        for (QuizScore score : scoreList) {
-            formattedScores.add(score.getDate() + "               " + score.getScore());
-        }
-
-
-        Toast.makeText(this, "Loaded " + formattedScores.size() + " scores", Toast.LENGTH_SHORT).show();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        adapter = new ArrayAdapter<>(
                 this,
                 R.layout.quiz_score_item,
                 R.id.scoreItem,
                 formattedScores
         );
 
+        quizListView.setAdapter(adapter);
 
-        if (formattedScores.isEmpty()) {
-            formattedScores.add("1         Sample Date         100");
+        // Load scores asynchronously
+        new LoadQuizScoresTask().execute();
+    }
+
+    private class LoadQuizScoresTask extends AsyncTask<Void, Void, List<QuizScore>> {
+
+        @Override
+        protected List<QuizScore> doInBackground(Void... voids) {
+            QuizScoresData scoresData = new QuizScoresData(getApplicationContext());
+            scoresData.open();
+            List<QuizScore> scores = scoresData.retrieveAllQuizScores();
+            scoresData.close();
+            return scores;
         }
 
+        @Override
+        protected void onPostExecute(List<QuizScore> scoreList) {
+            formattedScores.clear();
 
-        quizListView.setAdapter(adapter);
+            if (scoreList.isEmpty()) {
+                formattedScores.add("1         Sample Date         100");
+            } else {
+                for (QuizScore score : scoreList) {
+                    formattedScores.add(score.getDate() + "               " + score.getScore());
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+//            Toast.makeText(PastQuizzes.this, "Loaded " + scoreList.size() + " scores", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
