@@ -5,9 +5,15 @@
 
 
     <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#BA0C2F" />
+
+    <TextView
         android:id="@+id/quizTitle"
         android:layout_width="match_parent"
-        android:layout_height="203dp"
+        android:layout_height="89dp"
         android:background="#BA0C2F"
         android:gravity="center"
         android:padding="16dp"

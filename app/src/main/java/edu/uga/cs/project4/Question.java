@@ -3,11 +3,13 @@ package edu.uga.cs.project4;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.io.Serializable;
+
 
 /**
  * Represents a single multiple-choice quiz question.
  */
-public class Question {
+public class Question implements Serializable{
 
     // The country this question is about
     private final String countryName;
@@ -37,12 +39,12 @@ public class Question {
         return countryName;
     }
 
-    // Get the correct answer (continent)
+    // Get the correct answer
     public String getCorrectContinent() {
         return correctContinent;
     }
 
-    // Return the list of possible answer options (shuffled)
+    // Return the list of possible answer options
     public List<String> getAnswerOptions() {
         return answerOptions;
     }
@@ -53,5 +55,4 @@ public class Question {
     public boolean isCorrect(String selectedContinent) {
         return correctContinent.equals(selectedContinent);
     }
-}
-
+} // Question

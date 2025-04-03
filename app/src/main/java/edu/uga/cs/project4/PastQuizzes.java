@@ -78,7 +78,7 @@ public class PastQuizzes extends AppCompatActivity {
                 formattedScores.add("1         Sample Date         100");
             } else {
                 for (QuizScore score : scoreList) {
-                    formattedScores.add(score.getDate() + "               " + score.getScore());
+                    formattedScores.add(score.getDate() + "               " + score.getScore()  + "/6");
                 }
             }
 

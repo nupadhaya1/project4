@@ -1,3 +1,4 @@
+<!-- res/layout/fragment_quiz.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/quizLayout"
     android:layout_width="match_parent"
@@ -6,76 +7,9 @@
     android:background="#BA0C2F"
     android:padding="24dp">
 
-    <TextView
-        android:id="@+id/questionText"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingBottom="16dp"
-        android:text="Question"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <RadioGroup
-        android:id="@+id/answersGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:textSize="34sp">
-
-        <RadioButton
-            android:id="@+id/answerA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/radio_button_tint"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-
-        <RadioButton
-            android:id="@+id/answerB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/radio_button_tint"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-
-        <RadioButton
-            android:id="@+id/answerC"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/radio_button_tint"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-    </RadioGroup>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:backgroundTint="#FFFFFF"
-            android:gravity="center"
-            android:text="Next"
-            android:layout_marginBottom="4dp"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/questionCountText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:text="Quiz Progress: 0/6" />
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

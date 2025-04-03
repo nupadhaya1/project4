@@ -27,7 +27,7 @@ public class QuizScoresData {
     private SQLiteOpenHelper quizScoresDbHelper;
 
     // Context used for Toast messages
-    private Context context;
+    Context context;
 
     // Array of column names to retrieve from the database when querying
     private static final String[] allColumns = {

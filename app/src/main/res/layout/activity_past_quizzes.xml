@@ -29,7 +29,7 @@
         <TextView
             android:id="@+id/pastQuizTitle"
             android:layout_width="match_parent"
-            android:layout_height="133dp"
+            android:layout_height="96dp"
             android:gravity="center"
             android:text="Past Quizzes"
             android:textColor="@color/white"
